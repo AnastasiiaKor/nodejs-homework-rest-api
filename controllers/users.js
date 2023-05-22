@@ -36,6 +36,7 @@ const login = async (req, res) => {
   const token = jwt.sign(payload, JWT_SECRET, {
     expiresIn: "23h",
   });
+  await User.findByIdAndUpdate(user._id, { token });
 
   res.status(200).json({
     token,
@@ -46,7 +47,35 @@ const login = async (req, res) => {
   });
 };
 
+const getCurrent = async (req, res) => {
+  const { email, subscription } = req.user;
+  res.json({
+    email,
+    subscription,
+  });
+};
+
+const logout = async (req, res) => {
+  const { id } = req.user;
+  await User.findByIdAndUpdate(id, { token: null });
+  res.status(204).json();
+};
+
+const updateSubscription = async (req, res) => {
+  const { id } = req.params;
+  const result = await User.findByIdAndUpdate(id, req.body, {
+    new: true,
+  });
+  if (!result) {
+    throw HttpError(404, "Not Found");
+  }
+  res.status(200).json(result);
+};
+
 module.exports = {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
+  logout: ctrlWrapper(logout),
+  getCurrent: ctrlWrapper(getCurrent),
+  updateSubscription: ctrlWrapper(updateSubscription),
 };
