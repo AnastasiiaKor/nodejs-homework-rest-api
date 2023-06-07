@@ -53,7 +53,7 @@ const verifyEmail = async (req, res) => {
     verificationToken: null,
     verify: true,
   });
-  res.status(200).json("Verification successful");
+  res.status(200).json({ message: "Verification successful" });
 };
 
 const verify = async (req, res) => {
@@ -69,7 +69,7 @@ const verify = async (req, res) => {
     html: `<a target="_blank" href="${BASE_URL}/users/verify/${verificationToken}">Click here to verify your email</a>`,
   };
   await sendEmail(verifyEmail);
-  res.status(200).json("Verification email sent");
+  res.status(200).json({ message: "Verification email sent" });
 };
 
 const login = async (req, res) => {
